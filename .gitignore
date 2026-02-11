@@ -1,0 +1,7 @@
+.venv/
+__pycache__/
+places_cache.db
+*.pyc
+.env
+static/videos/
+*.mp4

@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Find My Vibe</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+<!-- =========================
+     NAVBAR
+========================= -->
+<nav class="navbar">
+  <a href="/" class="brand-logo">
+    Vibe<span>Voyage</span>
+</a>
+  <button class="nav-passport-btn">
+    My Vibe Passport
+  </button>
+</nav>
+<!-- =========================
+     HERO SECTION (PAGE 1)
+========================== -->
+<section class="video-hero">
+
+    <!-- Background Video -->
+    <video autoplay muted loop playsinline class="hero-video">
+        <source src="{{ url_for('static', filename='videos/hero.mp4') }}" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
+    <!-- Overlay -->
+    <div class="video-overlay"></div>
+<div class="center-box glass-box">
+    </div>
+    <!-- Hero Content -->
+    <div class="hero-content">
+        <h1>Find places that feel like you</h1>
+        <p>Descibe a mood . we'll map places that match it </p>
+
+        <button class="btn-primary" onclick="scrollToVibe()">
+            Find My Vibe
+        </button>
+    </div>
+
+</section>
+
+<!-- =========================
+     VIBE CAROUSEL SECTION (PAGE 2)
+========================== -->
+<section id="vibe-section" class="slide vibe-section">
+
+    <h2 class="vibe-title">
+        Every place has a feeling.
+    </h2>
+<h2 class="vibe-title">
+We help you find the one that matches yours.
+    </h2>
+    <div class="vibe-carousel-wrapper">
+        <div class="vibe-carousel-track">
+
+            <!-- CARD -->
+            <div class="vibe-card" onclick="selectVibe('Dark Academia')">
+                <img src="{{ url_for('static', filename='images/dark-academia.jpg') }}">
+                <h3>Dark Academia</h3>
+                <p>Books, silence, old souls</p>
+            </div>
+
+            <div class="vibe-card" onclick="selectVibe('Cyberpunk')">
+                <img src="{{ url_for('static', filename='images/cyberpunk.jpg') }}">
+                <h3>Cyberpunk</h3>
+                <p>Neon nights & chaos</p>
+            </div>
+
+            <div class="vibe-card" onclick="selectVibe('Nature Calm')">
+                <img src="{{ url_for('static', filename='images/nature.jpg') }}">
+                <h3>Nature Calm</h3>
+                <p>Forests & stillness</p>
+            </div>
+
+            <div class="vibe-card" onclick="selectVibe('Holy & Spiritual')">
+                <img src="{{ url_for('static', filename='images/spiritual.jpg') }}">
+                <h3>Holy & Spiritual</h3>
+                <p>Sacred peace</p>
+            </div>
+
+            <div class="vibe-card" onclick="selectVibe('Romantic Night')">
+                <img src="{{ url_for('static', filename='images/romantic.jpg') }}">
+                <h3>Romantic Night</h3>
+                <p>Soft lights & walks</p>
+            </div>
+
+            <!-- DUPLICATED SET FOR INFINITE SCROLL -->
+            <div class="vibe-card" onclick="selectVibe('Dark Academia')">
+                <img src="{{ url_for('static', filename='images/dark-academia.jpg') }}">
+                <h3>Dark Academia</h3>
+                <p>Books, silence, old souls</p>
+            </div>
+
+            <div class="vibe-card" onclick="selectVibe('Cyberpunk')">
+                <img src="{{ url_for('static', filename='images/cyberpunk.jpg') }}">
+                <h3>Cyberpunk</h3>
+                <p>Neon nights & chaos</p>
+            </div>
+
+            <div class="vibe-card" onclick="selectVibe('Nature Calm')">
+                <img src="{{ url_for('static', filename='images/nature.jpg') }}">
+                <h3>Nature Calm</h3>
+                <p>Forests & stillness</p>
+            </div>
+
+            <div class="vibe-card" onclick="selectVibe('Holy & Spiritual')">
+                <img src="{{ url_for('static', filename='images/spiritual.jpg') }}">
+                <h3>Holy & Spiritual</h3>
+                <p>Sacred peace</p>
+            </div>
+
+            <div class="vibe-card" onclick="selectVibe('Romantic Night')">
+                <img src="{{ url_for('static', filename='images/romantic.jpg') }}">
+                <h3>Romantic Night</h3>
+                <p>Soft lights & walks</p>
+            </div>
+
+        </div>
+    </div>
+
+</section>
+<!-- =========================
+     HOW IT WORKS (FLOW MAGIC)
+========================= -->
+<section class="how-flow-section">
+
+  <h2 class="flow-title">How the Magic Happens</h2>
+
+  <div class="flow-container">
+
+    <div class="flow-step">
+      <div class="flow-visual step1">
+        <img src="/static/images/feeling.jpg" alt="Describe feeling">
+      </div>
+      <h3>Describe the Feeling</h3>
+      <p>Type anything. Calm coffee. Neon chaos. Spiritual sunset.</p>
+    </div>
+
+    <div class="flow-connector"></div>
+
+    <div class="flow-step">
+      <div class="flow-visual step2">
+        <img src="/static/images/match.jpg" alt="Match moment">
+      </div>
+      <h3>We Match the Moment</h3>
+      <p>We analyze mood, time, energy and atmosphere.</p>
+    </div>
+
+    <div class="flow-connector"></div>
+
+    <div class="flow-step">
+      <div class="flow-visual step3">
+        <img src="/static/images/map-preview.jpg" alt="Explore map">
+      </div>
+      <h3>Explore Your Map</h3>
+      <p>Places ranked by how they feel — not just stars.</p>
+    </div>
+
+  </div>
+
+</section>
+<!-- =========================
+     FINAL INPUT SECTION
+========================= -->
+
+<section class="final-input-section">
+
+  <div class="final-input-container">
+
+    <h2>Your next favorite place is waiting.</h2>
+
+    <!-- VIBE INPUT -->
+    <input 
+      type="text" 
+      id="finalVibeInput" 
+      placeholder="Tell us how you feel. We’ll take care of the rest."
+      class="final-input"
+    />
+
+    <button class="btn-primary" onclick="handleVibeStep()">
+      Find My Vibe
+    </button>
+
+    <!-- LOCATION OPTIONS (Hidden Initially) -->
+    <div id="locationStep" class="location-step hidden">
+
+      <p>Choose your location:</p>
+
+      <div class="location-options">
+        <button onclick="useCurrentLocation()">Use My Current Location</button>
+        <button onclick="showManualLocation()">Enter Location Manually</button>
+      </div>
+
+      <!-- MANUAL LOCATION INPUT -->
+      <div id="manualLocationBox" class="hidden">
+        <input 
+          type="text" 
+          id="manualLocationInput" 
+          placeholder="Enter city or area"
+          class="final-input"
+        />
+        <button class="btn-primary" onclick="submitManualLocation()">
+          Continue
+        </button>
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+<!-- =========================
+     VIBE INPUT OVERLAY
+========================= -->
+<div id="vibeOverlay" class="vibe-overlay hidden">
+
+    <div class="form-box">
+        <h2>What are you feeling?</h2>
+
+        <label>Vibe</label>
+        <input type="text" id="vibeInput" placeholder="calm coffee, neon nights">
+
+        <label>Location</label>
+        <input type="text" id="locationInput" placeholder="City or area">
+
+        <button class="btn-primary" onclick="findVibe()">
+            Continue
+        </button>
+    </div>
+
+</div>
+
+<!-- =========================
+     JS
+========================== -->
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+<script src="{{ url_for('static', filename='js/vibe-carousel.js') }}"></script>
+<script src="{{ url_for('static', filename='js/vibe.js') }}"></script>
+
+</body>
+</html>

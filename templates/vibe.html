@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Select Your Vibe</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="slide">
+
+    <div class="form-box">
+        <h2>What’s your vibe?</h2>
+
+        <label>Vibe (type anything)</label>
+        <input type="text" id="vibeInput" placeholder="eg. calm nature, night city, dark academia">
+
+        <label>Location</label>
+        <input type="text" id="locationInput" placeholder="City or area">
+
+        <label>Age (optional)</label>
+        <input type="number" id="ageInput" placeholder="Your age">
+
+        <label>Personality (optional)</label>
+        <select id="personalityInput">
+            <option value="">Select</option>
+            <option>Introvert</option>
+            <option>Extrovert</option>
+            <option>Ambivert</option>
+            <option>Omnivert</option>
+        </select>
+
+        <button class="btn-primary" onclick="findVibe()">
+            Find My Vibe
+        </button>
+    </div>
+
+<script src="{{ url_for('static', filename='js/vibe.js') }}"></script>
+</body>
+</html>
