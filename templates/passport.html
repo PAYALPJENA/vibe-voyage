@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My Passport</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="slide">
+
+    <div class="passport-container">
+
+        <!-- 🔥 New Premium Header -->
+        <div class="passport-header">
+            <h1>🌍 My Passport</h1>
+            <p>Your saved places & vibe history</p>
+        </div>
+
+        <!-- 💙 Wishlist Section -->
+        <section class="passport-section">
+            <h2>💙 Wishlist</h2>
+            <div id="wishlist" class="wishlist-grid"></div>
+            <p id="emptyWishlist" class="empty-state hidden">
+                Your wishlist is empty. Add places you love ✨
+            </p>
+        </section>
+
+        <!-- 📊 Top Vibes Section -->
+        <section class="passport-section">
+            <h2>📊 Top Places by Mood</h2>
+            <div id="vibe-summary"></div>
+        </section>
+
+    </div>
+
+<script src="{{ url_for('static', filename='js/passport.js') }}"></script>
+</body>
+</html>

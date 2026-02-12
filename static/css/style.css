@@ -143,7 +143,6 @@ body {
     width: 100%;
     margin-top: 20px;
 }
-
 /* =========================
    RESULTS PAGE LAYOUT
 ========================= */
@@ -248,6 +247,206 @@ body {
     height: 120px;
     object-fit: cover;
     border-radius: 10px;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.place-img-thumb:hover {
+    transform: scale(1.05);
+}
+
+.no-img {
+    background: #1e293b;
+    height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    color: #64748b;
+}
+
+/* =========================
+   FEEDBACK MODAL
+========================= */
+.feedback-modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    align-items: center;
+    justify-content: center;
+}
+
+.feedback-modal-content {
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    padding: 30px;
+    border-radius: 15px;
+    max-width: 400px;
+    width: 90%;
+    border: 2px solid #38bdf8;
+    box-shadow: 0 0 30px rgba(56, 189, 248, 0.3);
+}
+
+.feedback-modal-content h2 {
+    color: #38bdf8;
+    margin-bottom: 10px;
+    font-size: 1.5rem;
+}
+
+.feedback-close {
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    font-size: 28px;
+    font-weight: bold;
+    color: #38bdf8;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.feedback-close:hover {
+    color: #0ea5e9;
+}
+
+.rating-container {
+    margin: 20px 0;
+}
+
+.rating-container p:first-child {
+    margin-bottom: 15px;
+    font-weight: 500;
+}
+
+.stars {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.star {
+    font-size: 2rem;
+    cursor: pointer;
+    opacity: 0.4;
+    transition: all 0.2s;
+    user-select: none;
+}
+
+.star:hover {
+    transform: scale(1.1);
+}
+
+.star.selected {
+    opacity: 1;
+    animation: pulse 0.3s ease;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
+/* Feedback buttons */
+.btn-feedback {
+    background: linear-gradient(135deg, #38bdf8 0%, #0ea5e9 100%);
+    color: #020617;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-top: 10px;
+    width: 100%;
+}
+
+.btn-feedback:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(56, 189, 248, 0.4);
+}
+
+.btn-feedback-submit {
+    background: #10b981;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    width: 100%;
+    margin-top: 20px;
+}
+
+.btn-feedback-submit:hover:not(:disabled) {
+    background: #059669;
+    transform: translateY(-2px);
+}
+
+.btn-feedback-submit:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.btn-feedback-cancel {
+    background: #64748b;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    width: 100%;
+    margin-top: 10px;
+}
+
+.btn-feedback-cancel:hover {
+    background: #475569;
+}
+
+/* Personalization panel styles */
+.personalization-panel {
+    background: rgba(2,6,23,0.6);
+    padding: 12px;
+    border-radius: 10px;
+    margin-bottom: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.personalization-panel input[type="range"] {
+    width: 100%;
+}
+
+.personalization-panel select {
+    padding: 8px;
+    border-radius: 8px;
+    background: #0f172a;
+    color: #f8fafc;
+    border: 1px solid #334155;
+}
+
+.btn-primary.small {
+    padding: 8px 12px;
+    font-size: 0.85rem;
+    width: 100%;
+}
+
+/* Feedback stats in place card */
+.feedback-stats {
+    font-size: 0.85rem;
+    color: #10b981;
+    margin-top: 8px;
+    font-weight: 500;
+
     cursor: pointer;
     margin-bottom: 8px;
 }
@@ -820,4 +1019,141 @@ body {
     opacity: 0;
     max-height: 0;
     overflow: hidden;
+}
+
+/* =========================
+   AI CONFIDENCE BADGE
+========================= */
+
+.confidence-badge {
+    font-size: 0.8rem;
+    margin-top: 6px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    display: inline-block;
+}
+
+.confidence-high {
+    background: rgba(34,197,94,0.2);
+    color: #22c55e;
+}
+
+.confidence-medium {
+    background: rgba(56,189,248,0.2);
+    color: #38bdf8;
+}
+
+.confidence-low {
+    background: rgba(148,163,184,0.2);
+    color: #94a3b8;
+}
+/* =========================
+   PASSPORT PAGE
+========================= */
+
+.passport-container {
+    max-width: 1000px;
+    margin: 100px auto;
+    padding: 20px;
+}
+
+.wishlist-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.wishlist-card {
+    background: #0f172a;
+    border-radius: 16px;
+    padding: 15px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+    transition: 0.3s ease;
+}
+
+.wishlist-card:hover {
+    transform: translateY(-5px);
+}
+
+.wishlist-card h4 {
+    margin-bottom: 8px;
+}
+
+.wishlist-card button {
+    margin-top: 10px;
+    width: 100%;
+}
+
+.empty-state {
+    margin-top: 20px;
+    opacity: 0.7;
+    text-align: center;
+}
+/* =========================
+   PASSPORT HEADER
+========================= */
+
+.passport-header {
+    text-align: center;
+    margin-top: 10px;
+    margin-bottom: 90px;
+}
+
+.passport-header h1 {
+    font-size: 3rem;
+    margin-bottom: 10px;
+}
+
+.passport-header p {
+    opacity: 0.7;
+}
+
+/* =========================
+   PASSPORT SECTIONS
+========================= */
+
+.passport-section {
+    max-width: 1100px;
+    margin: 0 auto 60px auto;
+    padding: 0 20px;
+}
+
+.wishlist-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 25px;
+}
+
+/* =========================
+   WISHLIST CARD
+========================= */
+
+.wishlist-card {
+    background: #0f172a;
+    border-radius: 16px;
+    padding: 20px;
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+}
+
+.wishlist-card:hover {
+    transform: translateY(-5px);
+    background: #1e293b;
+}
+
+.wishlist-meta {
+    font-size: 0.8rem;
+    opacity: 0.7;
+    margin-top: 6px;
+}
+
+.empty-state {
+    text-align: center;
+    opacity: 0.6;
+    margin-top: 20px;
+}
+
+.hidden {
+    display: none;
 }

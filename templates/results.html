@@ -15,15 +15,47 @@
         <!-- SIDE LIST -->
         <div class="places-list">
             <h3>Recommended Places</h3>
+
+
+
             <div id="places"></div>
         </div>
 
     </div>
 
-<script src="{{ url_for('static', filename='js/map.js') }}"></script>
-<script async
+    <!-- ==============================
+         FEEDBACK MODAL
+    ============================== -->
+    <div id="feedbackModal" class="feedback-modal">
+        <div class="feedback-modal-content">
+            <span class="feedback-close">&times;</span>
+            
+            <h2>Rate This Place</h2>
+            <p id="feedbackPlaceName" style="font-size: 1.1rem; margin-bottom: 20px; color: #38bdf8;"></p>
+            
+            <div class="rating-container">
+                <p>How well did this place match your vibe?</p>
+                <div class="stars">
+                    <span class="star" data-value="1">⭐</span>
+                    <span class="star" data-value="2">⭐</span>
+                    <span class="star" data-value="3">⭐</span>
+                    <span class="star" data-value="4">⭐</span>
+                    <span class="star" data-value="5">⭐</span>
+                </div>
+                <p id="ratingText" style="margin-top: 10px; font-size: 0.9rem; opacity: 0.8;">Select a rating</p>
+            </div>
+            
+            <button class="btn-feedback-submit" onclick="submitFeedback()">Submit Feedback</button>
+            <button class="btn-feedback-cancel" onclick="closeFeedbackModal()">Cancel</button>
+            
+            <p id="feedbackMessage" style="margin-top: 15px; text-align: center; font-size: 0.9rem;"></p>
+        </div>
+    </div>
+
+<script
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCB8ugDH0XlhxJaud08gZepoYpkfvucTBI">
 </script>
 <script src="{{ url_for('static', filename='js/map.js') }}"></script>
+<script src="{{ url_for('static', filename='js/feedback.js') }}"></script>
 </body>
 </html>
