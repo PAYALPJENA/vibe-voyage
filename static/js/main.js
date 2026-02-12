@@ -72,6 +72,7 @@ function useCurrentLocation() {
             const payload = {
                 vibe: selectedVibe,
                 location: `${lat},${lng}`,
+                coords: { lat: lat, lng: lng },
                 age: "",
                 personality: "",
                 useCoords: true

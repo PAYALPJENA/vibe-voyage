@@ -35,6 +35,63 @@ GEMINI_MODEL = "gemini-1.5-pro"
 # ==============================
 
 EMOTION_PLACE_MAPPING = {
+    # Nature & Exploration
+    "nature": {
+        "place_types": ["natural_feature", "park", "hiking_trail"],
+        "keywords": ["scenic", "outdoor", "nature", "landscape"],
+        "best_time": "Daytime"
+    },
+    "forest": {
+        "place_types": ["natural_feature", "park"],
+        "keywords": ["nature", "green", "peaceful", "scenic"],
+        "best_time": "Morning"
+    },
+    "trekking": {
+        "place_types": ["natural_feature", "park", "tourist_attraction"],
+        "keywords": ["hiking", "trekking", "trails", "mountains", "scenic", "outdoor", "adventure"],
+        "best_time": "Early Morning or Afternoon"
+    },
+    "hiking": {
+        "place_types": ["natural_feature", "park", "tourist_attraction"],
+        "keywords": ["trails", "mountains", "outdoor", "scenic", "hiking", "landscape"],
+        "best_time": "Morning"
+    },
+    "mountaineering": {
+        "place_types": ["natural_feature", "park", "tourist_attraction"],
+        "keywords": ["mountains", "peaks", "trekking", "altitude", "adventure", "challenging"],
+        "best_time": "Early Morning"
+    },
+    "adventure": {
+        "place_types": ["natural_feature", "park", "tourist_attraction", "sports_complex"],
+        "keywords": ["adventure", "thrilling", "outdoor", "trekking", "activity", "exploration"],
+        "best_time": "Daytime"
+    },
+    "outdoor": {
+        "place_types": ["natural_feature", "park", "tourist_attraction"],
+        "keywords": ["outdoor", "nature", "scenic", "hiking", "fresh air"],
+        "best_time": "Daytime"
+    },
+    "dark academia": {
+        "place_types": ["library", "museum", "university"],
+        "keywords": ["historical", "academic", "intellectual", "quiet"],
+        "best_time": "Afternoon"
+    },
+    "urban": {
+        "place_types": ["restaurant", "shopping_mall", "tourist_attraction"],
+        "keywords": ["city", "vibrant", "modern", "busy"],
+        "best_time": "Evening"
+    },
+    "mysterious": {
+        "place_types": ["museum", "park", "library"],
+        "keywords": ["intriguing", "hidden", "unique", "artistic"],
+        "best_time": "Evening"
+    },
+    "cozy": {
+        "place_types": ["cafe", "restaurant", "park"],
+        "keywords": ["warm", "comfortable", "intimate", "relaxing"],
+        "best_time": "Evening"
+    },
+    
     # Spiritual & Peaceful
     "spiritual": {
         "place_types": ["place_of_worship", "park", "natural_feature"],
@@ -149,6 +206,41 @@ EMOTION_PLACE_MAPPING = {
         "place_types": ["museum", "park", "tourist_attraction"],
         "keywords": ["historical", "cultural", "heritage", "memories"],
         "best_time": "Afternoon"
+    },
+    "retro": {
+        "place_types": ["museum", "cafe", "restaurant"],
+        "keywords": ["vintage", "old-fashioned", "nostalgic", "classic"],
+        "best_time": "Afternoon"
+    },
+    "vintage": {
+        "place_types": ["museum", "cafe", "antique_market"],
+        "keywords": ["old", "classic", "heritage", "traditional"],
+        "best_time": "Afternoon"
+    },
+    "bohemian": {
+        "place_types": ["cafe", "park", "museum"],
+        "keywords": ["artistic", "eclectic", "creative", "alternative"],
+        "best_time": "Afternoon or Evening"
+    },
+    "minimalist": {
+        "place_types": ["museum", "park", "cafe"],
+        "keywords": ["simple", "clean", "modern", "zen"],
+        "best_time": "Afternoon"
+    },
+    "aesthetic": {
+        "place_types": ["cafe", "museum", "park"],
+        "keywords": ["beautiful", "photogenic", "artistic", "visually pleasing"],
+        "best_time": "Golden Hour"
+    },
+    "dreamy": {
+        "place_types": ["park", "cafe", "library"],
+        "keywords": ["peaceful", "imaginative", "whimsical", "serene"],
+        "best_time": "Sunset or Evening"
+    },
+    "moody": {
+        "place_types": ["cafe", "library", "park"],
+        "keywords": ["atmospheric", "contemplative", "artistic", "introspective"],
+        "best_time": "Evening"
     }
 }
 
@@ -378,8 +470,8 @@ Return ONLY valid JSON with emotionally appropriate recommendations:
             print(f"⚠️ Using generic fallback for: {vibe}")
             used_fallback = True
             intent = {
-                "place_types": ["tourist_attraction", "park"],
-                "keywords": ["popular", "nearby"],
+                "place_types": ["restaurant", "cafe", "park", "tourist_attraction"],
+                "keywords": ["popular", "highly rated", "nearby"],
                 "best_time": "Day"
             }
 
@@ -387,10 +479,10 @@ Return ONLY valid JSON with emotionally appropriate recommendations:
         keywords = intent.get("keywords", ["peaceful"])
         best_time = intent.get("best_time", "Day")
 
-        # If we had to resort to a generic fallback intent, the system couldn't
-        # interpret the user's vibe confidently. Ask them to refine the input.
-        if 'used_fallback' in locals() and used_fallback:
-            return jsonify({"error": "Couldn't interpret your vibe. Try describing a mood (e.g., 'calm', 'energetic', 'romantic') instead of a name or ambiguous phrase."}), 400
+        # ✅ Always proceed with intent (either from Gemini or fallback)
+        # Even if Gemini failed, the fallback will search for generic popular places
+        if used_fallback:
+            print(f"⚠️ Using fallback intent for '{vibe}' - results may be less relevant")
 
     # ---------- GEOCODE / COORDS ----------
     if coords and isinstance(coords, dict) and coords.get("lat") and coords.get("lng"):

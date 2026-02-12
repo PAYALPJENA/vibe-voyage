@@ -30,6 +30,17 @@ function setupPersonalization(vibeData) {
 
 function fetchRecommendations(vibeData) {
     const payload = Object.assign({}, vibeData);
+    // If frontend saved location as "lat,lng" string, convert to coords object
+    if (!payload.coords && typeof payload.location === 'string') {
+        const parts = payload.location.split(',');
+        if (parts.length === 2) {
+            const lat = parseFloat(parts[0]);
+            const lng = parseFloat(parts[1]);
+            if (!isNaN(lat) && !isNaN(lng)) {
+                payload.coords = { lat: lat, lng: lng };
+            }
+        }
+    }
     
     fetch("/api/recommend", {
         method: "POST",

@@ -25,7 +25,11 @@ function findVibe() {
 function useCurrentLocation() {
     navigator.geolocation.getCurrentPosition(position => {
         const data = JSON.parse(sessionStorage.getItem("vibeData"));
-        data.location = `${position.coords.latitude},${position.coords.longitude}`;
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+        data.location = `${lat},${lng}`;
+        data.coords = { lat: lat, lng: lng };
+        data.useCoords = true;
         sessionStorage.setItem("vibeData", JSON.stringify(data));
         window.location.href = "/results";
     });
