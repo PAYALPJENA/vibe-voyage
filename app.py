@@ -1,4 +1,3 @@
-
 from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
 import requests
@@ -12,23 +11,22 @@ from rag_engine import (
     init_db, get_embedding, cache_place, retrieve_similar_places,
     save_feedback, get_place_feedback_stats, get_vibe_place_rating,
     get_recommendation_confidence, filter_negative_feedback,
-    get_vibe_place_associations, rank_by_feedback, DB_PATH
+    get_vibe_place_associations, rank_by_feedback, DB_PATH,
+    add_wishlist_item, remove_wishlist_item, get_wishlist, get_top_places_for_vibe
 )
 
 app = Flask(__name__)
 CORS(app)
-init_db()
+
 
 
 # ==============================
 # 🔑 CONFIG
 # ==============================
-import os 
-from dotenv import load_dotenv
-load_dotenv()
 
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
+GEMINI_API_KEY = "AIzaSyCRPz03CMRzRA36eVpvAAdWmiBSLNDkiZE"
+GOOGLE_API_KEY = "AIzaSyCB8ugDH0XlhxJaud08gZepoYpkfvucTBI"
+
 GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent"
 GEMINI_MODEL = "gemini-1.5-pro"
 
@@ -90,7 +88,7 @@ EMOTION_PLACE_MAPPING = {
     
     # Energetic & Active
     "energetic": {
-        "place_types": ["gym", "sports_complex", "park"],
+        "place_types": ["gym", "sports_complex", "park", "dance class"],
         "keywords": ["active", "athletic", "outdoor", "fitness"],
         "best_time": "Morning or Evening"
     },
@@ -193,6 +191,11 @@ def results():
 def about():
     return render_template("about.html")
 
+
+@app.route("/passport")
+def passport():
+    return render_template("passport.html")
+
 # ==============================
 # 🌍 GEOCODING (BUG 2 FIXED)
 # ==============================
@@ -211,7 +214,26 @@ def geocode_city(city):
     if res.get("status") != "OK" or not res.get("results"):
         return None, None
 
-    loc = res["results"][0]["geometry"]["location"]
+    best = res["results"][0]
+
+    # Accept the result only if it represents a locality/administrative area
+    # This helps avoid accepting person names or ambiguous entity matches
+    accepted_types = set([
+        "locality",
+        "postal_town",
+        "sublocality",
+        "neighborhood",
+        "administrative_area_level_1",
+        "administrative_area_level_2",
+        "administrative_area_level_3",
+        "country"
+    ])
+
+    result_types = set(best.get("types", []))
+    if not (result_types & accepted_types):
+        return None, None
+
+    loc = best["geometry"]["location"]
     return loc["lat"], loc["lng"]
 
 # ==============================
@@ -350,9 +372,11 @@ Return ONLY valid JSON with emotionally appropriate recommendations:
         except Exception as e:
             print(f"⚠️ Gemini failed: {e}")
         
-        # Fallback if Groq fails
+        # Fallback if Gemini fails - mark used_fallback so we can reject
+        used_fallback = False
         if intent is None:
             print(f"⚠️ Using generic fallback for: {vibe}")
+            used_fallback = True
             intent = {
                 "place_types": ["tourist_attraction", "park"],
                 "keywords": ["popular", "nearby"],
@@ -362,6 +386,11 @@ Return ONLY valid JSON with emotionally appropriate recommendations:
         place_types = intent.get("place_types", [])
         keywords = intent.get("keywords", ["peaceful"])
         best_time = intent.get("best_time", "Day")
+
+        # If we had to resort to a generic fallback intent, the system couldn't
+        # interpret the user's vibe confidently. Ask them to refine the input.
+        if 'used_fallback' in locals() and used_fallback:
+            return jsonify({"error": "Couldn't interpret your vibe. Try describing a mood (e.g., 'calm', 'energetic', 'romantic') instead of a name or ambiguous phrase."}), 400
 
     # ---------- GEOCODE / COORDS ----------
     if coords and isinstance(coords, dict) and coords.get("lat") and coords.get("lng"):
@@ -556,6 +585,56 @@ def get_vibe_insights(vibe):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+
+@app.route("/api/wishlist", methods=["GET", "POST", "DELETE"])
+def api_wishlist():
+    try:
+        if request.method == 'GET':
+            items = get_wishlist()
+            return jsonify({'wishlist': items}), 200
+
+        data = request.json or {}
+        if request.method == 'POST':
+            place_name = data.get('place_name')
+            place_data = data.get('place_data', {})
+            if not place_name:
+                return jsonify({'error': 'place_name required'}), 400
+            ok = add_wishlist_item(place_name, place_data)
+            if ok:
+                return jsonify({'success': True}), 200
+            return jsonify({'error': 'failed to add'}), 500
+
+        if request.method == 'DELETE':
+            place_name = data.get('place_name')
+            if not place_name:
+                return jsonify({'error': 'place_name required'}), 400
+            ok = remove_wishlist_item(place_name)
+            if ok:
+                return jsonify({'success': True}), 200
+            return jsonify({'error': 'failed to remove'}), 500
+
+    except Exception as e:
+        print(f"Wishlist API error: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/passport-summary', methods=['GET'])
+def api_passport_summary():
+    try:
+        # wishlist
+        wishlist_items = get_wishlist()
+
+        # top places per mood (limit small)
+        vibes = list(EMOTION_PLACE_MAPPING.keys())[:6]  # limit to first 6 moods for summary
+        top_by_vibe = {}
+        for v in vibes:
+            top_by_vibe[v] = get_top_places_for_vibe(v, limit=5)
+
+        return jsonify({'wishlist': wishlist_items, 'top_by_vibe': top_by_vibe}), 200
+    except Exception as e:
+        print(f"Passport summary error: {e}")
+        return jsonify({'error': str(e)}), 500
+
 @app.route("/api/learning-stats", methods=["GET"])
 def get_learning_stats():
     """Get system learning statistics"""
@@ -606,56 +685,3 @@ def get_learning_stats():
 
 if __name__ == "__main__":
     app.run(debug=True)
-# ==============================
-# 🖼 PHOTO PROXY (FIXED)
-# ==============================
-@app.route("/api/photo")
-def get_photo():
-    photo_ref = request.args.get("ref")
-
-    if not photo_ref:
-        return "No photo reference", 400
-
-    url = "https://maps.googleapis.com/maps/api/place/photo"
-    params = {
-        "maxwidth": 800,
-        "photo_reference": photo_ref,
-        "key": GOOGLE_API_KEY
-    }
-
-    response = requests.get(url, params=params, allow_redirects=True)
-
-    if response.status_code != 200:
-        return "Image not found", 404
-
-    return response.content, 200, {
-        "Content-Type": response.headers.get("Content-Type", "image/jpeg")
-    }
-    # ==============================
-# 📷 GOOGLE PLACE PHOTO PROXY
-# ==============================
-
-@app.route("/api/photo")
-def get_photo():
-    photo_ref = request.args.get("ref")
-
-    if not photo_ref:
-        return "No photo reference", 400
-
-    url = "https://maps.googleapis.com/maps/api/place/photo"
-
-    params = {
-        "maxwidth": 800,
-        "photo_reference": photo_ref,
-        "key": GOOGLE_API_KEY
-    }
-
-    response = requests.get(url, params=params, stream=True)
-
-    if response.status_code not in [200, 302]:
-        print("Photo fetch failed:", response.status_code)
-        return "Image not found", 404
-
-    return response.content, 200, {
-        "Content-Type": response.headers.get("Content-Type", "image/jpeg")
-    }
